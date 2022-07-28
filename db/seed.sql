@@ -1,0 +1,19 @@
+USE employee_tracker;
+
+INSERT INTO department (dept_name) VALUES
+    ('Sales'),
+    ('Engineering'),
+    ('Finance'),
+    ('legal');
+
+INSERT INTO job_role (title, salary, department_id) VALUES
+    ('Sales Lead', 100000, 1),
+    ('Lead Engineer', 150000, 2),
+    ('Account Manager', 160000, 3),
+    ('Legal Team Lead', 250000, 4);
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES
+    ('John', 'Doe', 1, NULL),
+    ('Ashley', 'Page', 2, NULL),
+    ('Bob', 'Singer', 3, NULL),
+    ('Ada', 'Lovelace', 4, NULL);

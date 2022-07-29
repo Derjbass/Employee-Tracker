@@ -20,7 +20,7 @@ var select = ['View All Employees', 'Add Employee', 'Update Employee Role', 'Vie
 
 
 // default function for starting screen
-const startScreen = (empData) => {
+const startScreen = () => {
     inquirer
         .prompt([
             {
@@ -36,15 +36,22 @@ const startScreen = (empData) => {
                     // pass inquirer obect to Query Class Constructor and call addEmployee Method
                     .then((obj) => new Query(obj).addEmployee())
                     .then(startScreen);
-            else if (res.selection === select[2]) UpEmpRole();
+            else if (res.selection === select[2]) 
+                upEmpRole()
+                .then((obj) => new Query(obj).updateEmployeeJob())
+                .then(startScreen);
             else if (res.selection === select[3]) getQuery.getJobRole();
             else if (res.selection === select[4]) 
                 addRole()
                     .then((obj) => new Query(obj).addJobRole())
                     .then(startScreen);
-            else if (res.selection === select[5]) getQuery.getDept();
-            else if (res.selection === select[6]) addDept();
-            else return;
+            else if (res.selection === select[5]) 
+            getQuery.getDept()
+                .then(startScreen);
+            else if (res.selection === select[6]) 
+                addDept()
+                    .then((obj) => new Query(obj).addDepartment())
+                    .then(startScreen);
         })
 }
 
@@ -87,20 +94,10 @@ const createEmployee = async () => {
 
 }
 
-
-const UpEmpRole = async() => {
-    db.query('SELECT first_name, last_name FROM employee')
-            .then(data => {
-            for (let i = 0; i < data[0].length; i++) {
-                let tempArr = [data[0][i].first_name, data[0][i].last_name]
-                employee.push(tempArr.join(' '));
-            }
-        })
-}
-
 const addRole = async () => {
     //updates dept for most current list
     dept = await getQuery.updateDeptArray();
+    console.log(dept);
 
     return inquirer
                 .prompt([
@@ -123,4 +120,37 @@ const addRole = async () => {
                 ])
 }
 
+const addDept = async () => {
+    return inquirer
+                .prompt([
+                    {
+                        type: 'input',
+                        name: 'dept_name',
+                        message: 'Enter department name: ',
+                    }
+                ])
+}
+
+const upEmpRole = async() => {
+    //update roles for accurate prompt
+    roles = await getQuery.updateRolesArray();
+    //update employees for accurate prompt
+    employees = await getQuery.updateEmpArray();
+    
+    return inquirer
+                .prompt([
+                    {
+                        type: 'list',
+                        name: 'employee',
+                        message: 'Which employee to update?',
+                        choices: employees
+                    },
+                    {
+                        type: 'list',
+                        name: 'role_id',
+                        message: 'What will be the new role?',
+                        choices: roles
+                    },
+                ]);
+}
 startScreen();

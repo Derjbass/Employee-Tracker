@@ -16,17 +16,17 @@ class Query{
 
         //query department information
         let query = await db.query('SELECT * from departments');
-        console.log(query[0]);
         let output = []; 
         let id = [];
         for(let i = 0; i < query[0].length; i++){
             id.push(query[0][i].id, query[0][i].dept_name)
             output.push(id);
-            // clear array after output push
+            // clear array after output push to prevent duplicates
             id = [];
             
             //id.push(query[0][i].dept_name);
         }
+        // display data in console
         console.table(['ID', 'Department'], output);
     };
 
@@ -34,9 +34,30 @@ class Query{
     async getJobRole(role) {
         //if arg is passed use if to get ID for role ID field when calling addEmployee
         if (role) {
-            let query = await db.query(`SELECT id FROM job_roles WHERE role_name = "${role}"`);
+            let query = await db.query(`SELECT * FROM job_roles WHERE role_name = "${role}"`);
             return query[0][0].id;
         };
+
+        //query role information
+        let query = await db.query('SELECT * FROM job_roles');
+        //query for department name by ID
+        let depQuery = await db.query('SELECT * FROM departments');
+
+
+        let output = []; 
+        let id = [];
+        for(let i = 0; i < query[0].length; i++){
+            // find department name from obj array
+            let obj = depQuery[0].find(o => o.id === query[0][i].department_id);
+            // job title, role id, department name pushed to array
+            id.push(query[0][i].role_name, query[0][i].id, obj.dept_name);
+            //push to output array
+            output.push(id);
+            //reset id array to prevent duplicates
+            id = [];
+        }
+        // display data in console
+        console.table(['Role', 'ID', 'Department'], output);
     };
 
     // function to get information from db
@@ -46,6 +67,47 @@ class Query{
             let query = await db.query(`SELECT id FROM employees WHERE first_name = "${manager[0]}" AND last_name = "${manager[1]}"`);
             return query[0][0].id;
         }
+
+        // below will show employee ids, first names, last names, job titles, departments, salaries, and managers name
+
+        let roleQuery = await db.query('SELECT * FROM job_roles');
+        let deptQuery = await db.query('SELECT * FROM departments');
+        let empQuery = await db.query('SELECT * FROM employees');
+
+        //merge queried data above single array
+        let data = [roleQuery[0], deptQuery[0], empQuery[0]];
+
+
+        let output = []; 
+        let id = [];
+        let tempArr = [];
+        for(let i = 0; i < data[2].length; i++){
+            // find manager name from manager id from employee array
+            let obj = data[2].find(o => o.id === data[2][i].manager_id)
+            //if to make sure only defined managers are pushed to array
+            if(obj) {
+                tempArr.push(obj.first_name, obj.last_name);
+                data[2][i].manager_id = tempArr.join(' ');
+            }
+            // find department name from department ID
+            let objDept = await data[1].find(o => o.id === data[2][i].role_id);
+            console.log(objDept);
+
+            // find role name from role id
+            let objRole = await data[0].find(o => o.id === data[2][i].role_id);
+            console.log(objRole);
+
+
+            id.push(data[2][i].id, data[2][i].first_name, data[2][i].last_name, objRole.role_name , objDept.dept_name, objRole.salary ,data[2][i].manager_id);
+
+            output.push(id);
+            // clear arrays after output push to prevent duplicates
+            id = [];
+            tempArr = [];
+        }
+        console.table(['ID', 'First Name', 'Last Name','Role', 'Department', 'Salary', 'Manager'], output);
+        
+        
 
     };
 
@@ -76,9 +138,9 @@ class Query{
         this.obj.role_id = await this.getJobRole(this.obj.role_id);
         // get employee first and last name for query readability
         this.obj.employee = await this.obj.employee.split(' ');
+       
         //update users new role ID
         await db.query(`UPDATE employees SET role_id = ${this.obj.role_id} WHERE first_name = "${this.obj.employee[0]}" AND last_name = "${this.obj.employee[1]}"`);
-
     };
 
     // function to update employee array

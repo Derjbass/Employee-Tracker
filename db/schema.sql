@@ -14,7 +14,7 @@ CREATE TABLE job_roles (
     role_name VARCHAR(30),
     salary DECIMAL,
     department_id INT NOT NULL,
-    FOREIGN KEY (department_id) REFERENCES departments (id)
+    FOREIGN KEY (department_id) REFERENCES departments (id) ON UPDATE CASCADE
 );
 
 CREATE TABLE employees (
@@ -23,6 +23,6 @@ CREATE TABLE employees (
     last_name VARCHAR(30),
     role_id INT NOT NULL,
     manager_id INT,
-    FOREIGN KEY (role_id) REFERENCES job_roles (id), 
+    FOREIGN KEY (role_id) REFERENCES job_roles (id) ON UPDATE CASCADE, 
     FOREIGN KEY (manager_id) REFERENCES employees (id) 
 );

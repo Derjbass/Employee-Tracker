@@ -30,28 +30,32 @@ const startScreen = () => {
                 choices: select
             }
         ]).then((res) => {
-            if (res.selection === select[0]) getQuery.getEmployees();
+            if (res.selection === select[0]) 
+                getQuery.getEmployees()
+                .then(startScreen);
             else if (res.selection === select[1]) 
                 createEmployee()
-                    // pass inquirer obect to Query Class Constructor and call addEmployee Method
                     .then((obj) => new Query(obj).addEmployee())
                     .then(startScreen);
             else if (res.selection === select[2]) 
                 upEmpRole()
                 .then((obj) => new Query(obj).updateEmployeeJob())
                 .then(startScreen);
-            else if (res.selection === select[3]) getQuery.getJobRole();
+            else if (res.selection === select[3]) 
+                getQuery.getJobRole()
+                .then(startScreen);
             else if (res.selection === select[4]) 
                 addRole()
                     .then((obj) => new Query(obj).addJobRole())
                     .then(startScreen);
             else if (res.selection === select[5]) 
-            getQuery.getDept()
+                getQuery.getDept()
                 .then(startScreen);
             else if (res.selection === select[6]) 
                 addDept()
                     .then((obj) => new Query(obj).addDepartment())
                     .then(startScreen);
+            else db.end();
         })
 }
 

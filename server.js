@@ -101,7 +101,6 @@ const createEmployee = async () => {
 const addRole = async () => {
     //updates dept for most current list
     dept = await getQuery.updateDeptArray();
-    console.log(dept);
 
     return inquirer
                 .prompt([

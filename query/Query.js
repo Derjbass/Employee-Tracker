@@ -91,11 +91,9 @@ class Query{
             }
             // find department name from department ID
             let objDept = await data[1].find(o => o.id === data[2][i].role_id);
-            console.log(objDept);
 
             // find role name from role id
             let objRole = await data[0].find(o => o.id === data[2][i].role_id);
-            console.log(objRole);
 
 
             id.push(data[2][i].id, data[2][i].first_name, data[2][i].last_name, objRole.role_name , objDept.dept_name, objRole.salary ,data[2][i].manager_id);

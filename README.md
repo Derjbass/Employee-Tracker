@@ -19,7 +19,7 @@ clone repo and install packages may need to change mysql connection to match use
 ## Usage
 User will get a prompt to make a selection to add a department/role/employee and subsequently view the same.  See demonstration video linked in this readme to see how to properly use the application.
 
-[DEMONSTRATION VIDEO](https://watch.screencastify.com/v/hdZcTJyAPBc02VT0X9WY)
+[DEMONSTRATION VIDEO](https://watch.screencastify.com/v/7OoMOt3pO2jyHwVDAjXh)
 ## Contribution
 free to clone and contribute as necessary
 ## License
